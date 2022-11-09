@@ -173,7 +173,6 @@ public class ConnectActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Turn on Bluetooth radio
      */
@@ -186,7 +185,6 @@ public class ConnectActivity extends AppCompatActivity {
             finish();
         }
     }
-
 
     /**
      * Connect to Peripheral

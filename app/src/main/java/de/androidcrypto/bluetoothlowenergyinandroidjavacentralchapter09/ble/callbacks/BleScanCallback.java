@@ -12,7 +12,7 @@ import java.util.List;
  * @author Tony Gaitatzis backupbrain@gmail.com
  * @date 2015-12-18
  */
-public abstract class BleScanCallbackv21 extends ScanCallback {
+public abstract class BleScanCallback extends ScanCallback {
 
     /**
      * New Perpheral found.

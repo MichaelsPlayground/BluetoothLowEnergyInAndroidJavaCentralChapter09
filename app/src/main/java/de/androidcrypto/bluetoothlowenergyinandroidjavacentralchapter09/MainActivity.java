@@ -27,8 +27,7 @@ import java.util.List;
 
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.adapters.BlePeripheralsListAdapter;
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.BleCommManager;
-import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallbackv18;
-import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallbackv21;
+import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallback;
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.models.BlePeripheralListItem;
 
 /**
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         // stop scanning when the activity pauses
-        mBleCommManager.stopScanning(mBleScanCallbackv18, mScanCallbackv21);
+        mBleCommManager.stopScanning(mScanCallback);
     }
 
     /**
@@ -235,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         mBlePeripheralsListAdapter.clear();
         try {
             mScanningActive = true;
-            mBleCommManager.scanForPeripherals(mBleScanCallbackv18, mScanCallbackv21);
+            mBleCommManager.scanForPeripherals(mScanCallback);
         } catch (Exception e) {
             Log.e(TAG, "Could not open Ble Device Scanner");
         }
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
      * Stop scanning for Peripherals
      */
     public void stopScan() {
-        mBleCommManager.stopScanning(mBleScanCallbackv18, mScanCallbackv21);
+        mBleCommManager.stopScanning(mScanCallback);
     }
 
     /**
@@ -321,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Use this callback for Android API 21 (Lollipop) or greater
      */
-    private final BleScanCallbackv21 mScanCallbackv21 = new BleScanCallbackv21() {
+    private final BleScanCallback mScanCallback = new BleScanCallback() {
         /**
          * New Peripheral discovered
          *
@@ -394,36 +393,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
-    /**
-     * Use this callback for Android API 18, 19, and 20 (before Lollipop)
-     */
-    public final BleScanCallbackv18 mBleScanCallbackv18 = new BleScanCallbackv18() {
-        /**
-         * New Peripheral discovered
-         * @param bluetoothDevice The Peripheral Device
-         * @param rssi The Peripheral's RSSI indicating how strong the radio signal is
-         * @param scanRecord Other information about the scan result
-         */
-        @Override
-        public void onLeScan(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord) {
-            onBlePeripheralDiscovered(bluetoothDevice, rssi);
-        }
-
-        /**
-         * Scan completed
-         */
-        @Override
-        public void onScanComplete() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onBleScanStopped();
-                }
-            });
-
-        }
-    };
-
 
 }

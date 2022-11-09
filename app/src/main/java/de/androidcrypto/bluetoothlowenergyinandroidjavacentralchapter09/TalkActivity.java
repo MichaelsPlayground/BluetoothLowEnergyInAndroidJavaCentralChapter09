@@ -28,8 +28,7 @@ import java.util.UUID;
 
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.BleCommManager;
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.BlePeripheral;
-import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallbackv18;
-import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallbackv21;
+import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.ble.callbacks.BleScanCallback;
 import de.androidcrypto.bluetoothlowenergyinandroidjavacentralchapter09.utilities.DataConverter;
 
 /**
@@ -160,7 +159,6 @@ public class TalkActivity extends AppCompatActivity {
         }
     }
 
-
     public void initializeBluetooth() {
         try {
             mBleCommManager = new BleCommManager(this);
@@ -170,7 +168,6 @@ public class TalkActivity extends AppCompatActivity {
             finish();
         }
     }
-
 
     public void connect() {
         // grab the Peripheral Device address and attempt to connect
@@ -396,15 +393,11 @@ public class TalkActivity extends AppCompatActivity {
                     });
                 }
 
-
             } else {
                 Log.e(TAG, "Something went wrong while discovering GATT services from this peripheral");
             }
-
-
         }
     };
-
 
     /**
      * Disconnect
@@ -415,16 +408,11 @@ public class TalkActivity extends AppCompatActivity {
         finish();
     }
 
-
-
-
-
     /**
      * Android-based Peripherals change MAC addresses between connections
      * As a result we can't simply connect to the last known MAC address
-     * Instead, we must scan for matching adertised names again
+     * Instead, we must scan for matching advertised names again
      */
-
 
     /**
      * Start scanning for Peripherals
@@ -432,7 +420,7 @@ public class TalkActivity extends AppCompatActivity {
     public void startScan() {
         try {
             mScanningActive = true;
-            mBleCommManager.scanForPeripherals(mBleScanCallbackv18, mScanCallbackv21);
+            mBleCommManager.scanForPeripherals(mScanCallback);
         } catch (Exception e) {
             Log.e(TAG, "Could not open Ble Device Scanner");
         }
@@ -443,7 +431,7 @@ public class TalkActivity extends AppCompatActivity {
      * Stop scanning for Peripherals
      */
     public void stopScan() {
-        mBleCommManager.stopScanning(mBleScanCallbackv18, mScanCallbackv21);
+        mBleCommManager.stopScanning(mScanCallback);
     }
 
     /**
@@ -481,11 +469,10 @@ public class TalkActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Use this callback for Android API 21 (Lollipop) or greater
      */
-    private final BleScanCallbackv21 mScanCallbackv21 = new BleScanCallbackv21() {
+    private final BleScanCallback mScanCallback = new BleScanCallback() {
         /**
          * New Peripheral discovered
          *
@@ -559,34 +546,5 @@ public class TalkActivity extends AppCompatActivity {
         }
     };
 
-    /**
-     * Use this callback for Android API 18, 19, and 20 (before Lollipop)
-     */
-    public final BleScanCallbackv18 mBleScanCallbackv18 = new BleScanCallbackv18() {
-        /**
-         * New Peripheral discovered
-         * @param bluetoothDevice The Peripheral Device
-         * @param rssi The Peripheral's RSSI indicating how strong the radio signal is
-         * @param scanRecord Other information about the scan result
-         */
-        @Override
-        public void onLeScan(BluetoothDevice bluetoothDevice, int rssi, byte[] scanRecord) {
-            onBlePeripheralDiscovered(bluetoothDevice, rssi);
-        }
-
-        /**
-         * Scan completed
-         */
-        @Override
-        public void onScanComplete() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onBleScanStopped();
-                }
-            });
-
-        }
-    };
 }
 
